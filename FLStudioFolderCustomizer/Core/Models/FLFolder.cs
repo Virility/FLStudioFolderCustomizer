@@ -30,7 +30,7 @@ namespace FLStudioFolderCustomizer.Models
 
         public int SortGroup { get; set; } = 4;
 
-        public bool NFOExists(string baseDirectory)
+        public bool NFOFileExists(string baseDirectory)
         {
             return File.Exists(Path.Combine(baseDirectory, GetNFOFileName()));
         }
@@ -90,7 +90,7 @@ namespace FLStudioFolderCustomizer.Models
             return folder;
         }
 
-        public string ToNFO()
+        public string ToNFOContent()
         {
             var sb = new StringBuilder();
             if (!string.IsNullOrWhiteSpace(Tip))

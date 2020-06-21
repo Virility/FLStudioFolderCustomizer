@@ -1,4 +1,5 @@
 ﻿using FLStudioFolderCustomizer.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -9,38 +10,51 @@ namespace FLStudioFolderCustomizer.Core.Models.ColorHelpers
     {
         public const string Name = "Color Splitting";
 
-        public override IEnumerable<Color> InterpolateColors(int startIndex, int endIndex, int length, Color[] colors)
+        public ColorSplit()
         {
-            for (int i = 0; i < length; i++)
+            StartIndex = 0;
+            LengthOffset = 0;
+            ColorOffset = 0;
+        }
+
+        public override List<Color> InterpolateColors(int startIndex, int endIndex, int length, Color[] colors)
+        {
+            for (int i = 0; i < colors.Length; i++)
                 Debug.WriteLine($"Color {i + 1}: " + colors[i].ToRgbString());
 
             var blockIndex = 0;
             var blockCount = 0;
-            var numberPerBlock = length / colors.Length;
+            var numberPerBlock = Math.Ceiling((double) length / colors.Length);
+            Debug.WriteLine("Number Per Block: " + numberPerBlock);
 
             var header = new string('=', 20);
             Debug.WriteLine(header);
 
-            for (int i = 0; i < length; i++)
+            var interpolatedColors = new List<Color>();
+            for (int i = StartIndex; i < length; i++)
             {
                 Debug.WriteLine("Item #" + (i + 1));
                 blockCount++;
-                Debug.WriteLine("Block Count: " + blockCount);
+                Debug.WriteLine($"Block Count: {blockCount}/{numberPerBlock}");
 
                 var color = colors[blockIndex];
                 Debug.WriteLine("Color: " + color.ToRgbString());
-                if (blockCount == numberPerBlock - 1)
+                if (blockCount == numberPerBlock)
                 {
                     blockIndex++;
                     if (blockIndex == colors.Length)
+                    {
                         blockIndex--;
-                    Debug.WriteLine(blockIndex);
-
+                        Debug.WriteLine($"Can't split evenly. We'll reuse {color.ToRgbString()}.");
+                    }
+                    Debug.WriteLine("Block Index" + blockIndex);
                     blockCount = 0;
                 }
-                yield return color;
+                interpolatedColors.Add(color);
             }
+
             Debug.WriteLine(header);
+            return interpolatedColors;
         }
 
         public override string ToString()

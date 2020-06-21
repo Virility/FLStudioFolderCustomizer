@@ -2,10 +2,10 @@
 using FLStudioFolderCustomizer.Core.Models.ColorHelpers;
 using FLStudioFolderCustomizer.Core.Models.Colors;
 using FLStudioFolderCustomizer.Models;
+using FLStudioFolderCustomizer.UI.Dialogs;
 using FLStudioFolderCustomizer.UI.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,22 +16,22 @@ namespace FLStudioFolderCustomizer.UI.Forms
     public partial class MainForm : Form
     {
         private const string DefaultRootPath = "DefaultRootPath.txt";
-        private readonly Dictionary<string, ColorInterpolater> _interpolaters;
+        private readonly ColorInterpolater[] _interpolaters;
+
+        private List<Color> _colorSceme;
 
         public MainForm()
         {
-            _interpolaters = new Dictionary<string, ColorInterpolater>
+            _interpolaters = new ColorInterpolater[]
             {
-                { ColorBlend.Name, new ColorBlend() },
-                { ColorSplit.Name, new ColorSplit() }
+                new ColorBlend(),
+                new ColorSplit()
             };
+            _colorSceme = new List<Color>();
 
             InitializeComponent();
 
-            var interpolationStrings = _interpolaters
-                .Select(interpolater => interpolater.Value.ToString())
-                .ToArray();
-            cbInterpolationModes.Items.AddRange(interpolationStrings);
+            cbInterpolationModes.Items.AddRange(_interpolaters);
             cbInterpolationModes.SelectedIndex = 0;
 
             LoadFromDirectory(string.Empty);
@@ -58,9 +58,9 @@ namespace FLStudioFolderCustomizer.UI.Forms
             {
                 var title = directory.Replace(rootFolder + "\\", string.Empty);
                 FLFolder folder;
-                var nfoPath = Path.Combine(directory + ".nfo");
-                if (File.Exists(nfoPath))
-                    folder = FLFolder.FromNFO(title, File.ReadAllLines(nfoPath));
+                var nfoFilePath = Path.Combine(directory + ".nfo");
+                if (File.Exists(nfoFilePath))
+                    folder = FLFolder.FromNFO(title, File.ReadAllLines(nfoFilePath));
                 else
                     folder = new FLFolder() { FolderName = title };
                 lvFLFolder.Items.Add(new FLFolderViewItem(rootFolder, folder));
@@ -93,7 +93,7 @@ namespace FLStudioFolderCustomizer.UI.Forms
                 return;
 
             var flFolderViewItem = lvFLFolder.SelectedItems[0] as FLFolderViewItem;
-            if (flFolderViewItem.Folder.NFOExists(tbRootFolder.Text))
+            if (flFolderViewItem.Folder.NFOFileExists(tbRootFolder.Text))
                 pgFLFolder.SelectedObject = flFolderViewItem.Folder;
             else
                 pgFLFolder.SelectedObject = null;
@@ -108,28 +108,31 @@ namespace FLStudioFolderCustomizer.UI.Forms
             if (Directory.Exists(directoryPath) && Directory.GetFiles(directoryPath).Length == 0)
                 Directory.Delete(directoryPath);
 
-            var nfoPath = Path.Combine(tbRootFolder.Text, e.OldValue.ToString() + ".nfo");
-            if (File.Exists(nfoPath))
-                File.Delete(nfoPath);
+            var nfoFilePath = Path.Combine(tbRootFolder.Text, e.OldValue.ToString() + ".nfo");
+            if (File.Exists(nfoFilePath))
+                File.Delete(nfoFilePath);
 
-            CreateOrRenameNFO(flFolderViewItem.Folder);
+            CreateNFOFile(flFolderViewItem.Folder);
             flFolderViewItem.Update();
         }
 
-        private void CreateOrRenameNFO(FLFolder folder)
+        private void CreateNFOFile(FLFolder folder)
         {
             var directoryPath = Path.Combine(tbRootFolder.Text, folder.GetSafeTitle());
-            var nfoPath = Path.Combine(tbRootFolder.Text, folder.GetNFOFileName());
+            var nfoFilePath = Path.Combine(tbRootFolder.Text, folder.GetNFOFileName());
 
             Directory.CreateDirectory(directoryPath);
-            File.WriteAllText(nfoPath, folder.ToNFO());
+            File.WriteAllText(nfoFilePath, folder.ToNFOContent());
         }
 
         private void tsmiCreateFolder_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(tbRootFolder.Text) || !Directory.Exists(tbRootFolder.Text))
+                return;
+
             var folder = new FLFolder();
             var flFolderViewItems = lvFLFolder.Items.Cast<FLFolderViewItem>();
-            for (int i = 0; true; i++)
+            for (int i = 0; ; i++)
             {
                 var title = folder + (i != 0 ? " #" + (i + 1).ToString() : string.Empty);
                 if (!flFolderViewItems.Any(item => item.Folder.FolderName == title))
@@ -138,17 +141,17 @@ namespace FLStudioFolderCustomizer.UI.Forms
                     break;
                 }
             }
-            CreateOrRenameNFO(folder);
+            CreateNFOFile(folder);
             lvFLFolder.Items.Add(new FLFolderViewItem(tbRootFolder.Text, folder));
         }
 
-        private void tsmiCreateNFOForFolder_Click(object sender, EventArgs e)
+        private void tsmiCreateNFOFileForFolder_Click(object sender, EventArgs e)
         {
             lvFLFolder.BeginUpdate();
             foreach (FLFolderViewItem flFolderViewItem in lvFLFolder.SelectedItems)
             {
                 flFolderViewItem.Folder.Color = FLFolder.DefaultTextColor;
-                CreateOrRenameNFO(flFolderViewItem.Folder);
+                CreateNFOFile(flFolderViewItem.Folder);
 
                 flFolderViewItem.Update();
                 lvFLFolder_SelectedIndexChanged(sender, null);
@@ -156,13 +159,13 @@ namespace FLStudioFolderCustomizer.UI.Forms
             lvFLFolder.EndUpdate();
         }
 
-        private void tsmiDeleteNFOForSelectedFolder_Click(object sender, EventArgs e)
+        private void tsmiDeleteNFOFileForSelectedFolder_Click(object sender, EventArgs e)
         {
             lvFLFolder.BeginUpdate();
             foreach (FLFolderViewItem flFolderViewItem in lvFLFolder.SelectedItems)
             {
-                var nfoPath = Path.Combine(tbRootFolder.Text, flFolderViewItem.Folder.GetNFOFileName());
-                File.Delete(nfoPath);
+                var nfoFilePath = Path.Combine(tbRootFolder.Text, flFolderViewItem.Folder.GetNFOFileName());
+                File.Delete(nfoFilePath);
 
                 flFolderViewItem.Update();
                 lvFLFolder_SelectedIndexChanged(sender, null);
@@ -170,16 +173,15 @@ namespace FLStudioFolderCustomizer.UI.Forms
             lvFLFolder.EndUpdate();
         }
 
-        private void ReplaceColorAndSave(IEnumerable<FLFolderViewItem> fLFolderViewItems, 
-            IEnumerable<Color> interpolated, int index, int offset = 0)
+        private void ReplaceColorAndSave(IEnumerable<FLFolderViewItem> fLFolderViewItems,
+            IEnumerable<Color> interpolatedColors, int index, int colorOffset)
         {
             var flFolderViewItem = fLFolderViewItems.ElementAt(index);
 
-            var color = MyColor.FromColor(interpolated.ElementAt(index + offset));
-            flFolderViewItem.Folder.Color = color;
+            flFolderViewItem.Folder.Color = MyColor.FromColor(interpolatedColors.ElementAt(index - colorOffset));
             flFolderViewItem.Update();
 
-            CreateOrRenameNFO(flFolderViewItem.Folder);
+            CreateNFOFile(flFolderViewItem.Folder);
         }
 
         private void InterpolateColors(int startIndex, int endIndex)
@@ -189,37 +191,48 @@ namespace FLStudioFolderCustomizer.UI.Forms
 
             var fLFolderViewItems = lvFLFolder.Items.Cast<FLFolderViewItem>()
                 .IndexRange(startIndex, endIndex)
-                .Where(folder => folder.Folder.NFOExists(tbRootFolder.Text));
-            // We want at least 3 items.
+                .Where(folder => folder.Folder.NFOFileExists(tbRootFolder.Text));
+            // We want at least 3 items. 2 items or less means nothing can be interpolated.
             var count = fLFolderViewItems.Count();
             if (count <= 2) return;
 
             try
             {
+                Color[] colors;
                 switch (cbInterpolationModes.SelectedItem.ToString())
                 {
                     case ColorBlend.Name:
-                        var colors = new[] {
-                            MyColor.ToColor(fLFolderViewItems.First().Folder.Color),
-                            MyColor.ToColor(fLFolderViewItems.Last().Folder.Color)
+                        colors = new[] {
+                            fLFolderViewItems.First().Folder.Color.ActualColor,
+                            fLFolderViewItems.Last().Folder.Color.ActualColor
                         };
-                        var interpolated = _interpolaters[ColorBlend.Name].InterpolateColors(startIndex, endIndex, count, colors);
-
-                        lvFLFolder.BeginUpdate();
-                        for (int i = 1; i < count - 1; i++)
-                            ReplaceColorAndSave(fLFolderViewItems, interpolated, i, -1);
-                        lvFLFolder.EndUpdate();
                         break;
                     case ColorSplit.Name:
-                        colors = new[] { Color.Red, Color.Pink };
-                        interpolated = _interpolaters[ColorSplit.Name].InterpolateColors(startIndex, endIndex, count, colors);
+                        if (_colorSceme.Count == 0 ||
+                           (_colorSceme.Count > 0 && MessageBox.Show("Would you like to use the last color scheme?", "Use Last Scheme?", MessageBoxButtons.YesNo) != DialogResult.Yes))
+                        {
+                            using var dialog = new ColorListPickerDialog();
+                            dialog.ShowDialog();
 
-                        lvFLFolder.BeginUpdate();
-                        for (int i = 0; i < count; i++)
-                            ReplaceColorAndSave(fLFolderViewItems, interpolated, i);
-                        lvFLFolder.EndUpdate();
+                            if (dialog.Colors.Count == 0)
+                            {
+                                MessageBox.Show("The color list is empty.");
+                                return;
+                            }
+
+                            _colorSceme = dialog.Colors;
+                        }
+                        colors = _colorSceme.ToArray();
                         break;
+                    default: return;
                 }
+
+                var interpolater = _interpolaters[cbInterpolationModes.SelectedIndex];
+                var interpolatedColors = interpolater.InterpolateColors(startIndex, endIndex, count, colors);
+                lvFLFolder.BeginUpdate();
+                for (int i = interpolater.StartIndex; i < count - interpolater.LengthOffset; i++)
+                    ReplaceColorAndSave(fLFolderViewItems, interpolatedColors, i, interpolater.ColorOffset);
+                lvFLFolder.EndUpdate();
             }
             catch (Exception ex)
             {

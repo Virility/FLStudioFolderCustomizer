@@ -78,6 +78,11 @@ namespace FLStudioFolderCustomizer.Core.Models.Colors
         {
             return Color.FromArgb(color.Red, color.Green, color.Blue);
         }
+
+        public Color ActualColor
+        { 
+            get => ToColor(this);
+        }
         #endregion
     }
 }

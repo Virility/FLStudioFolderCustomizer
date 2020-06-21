@@ -34,10 +34,13 @@ namespace FLStudioFolderCustomizer.UI.Models
         {
             SubItems.Clear();
             Text = _folder.FolderName;
-            var nfoExists = _folder.NFOExists(_baseFolder);
-            SubItems.Add(nfoExists.ToString());
-            if (nfoExists)
-                BackColor = MyColor.ToColor(Folder.Color);
+            var nfoFileExists = _folder.NFOFileExists(_baseFolder);
+            SubItems.Add(nfoFileExists.ToString());
+            var nameIsCompliant = !Folder.FolderName.Contains(".");
+            SubItems.Add(nameIsCompliant.ToString());
+
+            if (nfoFileExists && nameIsCompliant)
+                ForeColor = MyColor.ToColor(Folder.Color);
         }
     }
 }

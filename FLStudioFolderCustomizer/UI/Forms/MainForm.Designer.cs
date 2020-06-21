@@ -32,8 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.cmsFLFolder = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmiCreateFolder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiCreateNFOForSelectedFolder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiDeleteNFOForSelectedFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiCreateNFOFileForSelectedFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiDeleteNFOFileForSelectedFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiInterpolateColorsFromBeginningToSelection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiInterpolateColorsFromBeginningToEnd = new System.Windows.Forms.ToolStripMenuItem();
             this.pgFLFolder = new System.Windows.Forms.PropertyGrid();
@@ -43,6 +43,7 @@
             this.lvFLFolder = new System.Windows.Forms.ListView();
             this.chDirectoryName = new System.Windows.Forms.ColumnHeader();
             this.chNFOFileExists = new System.Windows.Forms.ColumnHeader();
+            this.chNameIsCompliant = new System.Windows.Forms.ColumnHeader();
             this.cbInterpolationModes = new System.Windows.Forms.ComboBox();
             this.lbInterpolatorMode = new System.Windows.Forms.Label();
             this.cmsFLFolder.SuspendLayout();
@@ -57,8 +58,8 @@
             this.cmsFLFolder.ImageScalingSize = new System.Drawing.Size(40, 40);
             this.cmsFLFolder.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiCreateFolder,
-            this.tsmiCreateNFOForSelectedFolder,
-            this.tsmiDeleteNFOForSelectedFolder,
+            this.tsmiCreateNFOFileForSelectedFolder,
+            this.tsmiDeleteNFOFileForSelectedFolder,
             this.tsmiInterpolateColorsFromBeginningToSelection,
             this.tsmiInterpolateColorsFromBeginningToEnd});
             this.cmsFLFolder.Name = "cmsFLFolder";
@@ -71,19 +72,19 @@
             this.tsmiCreateFolder.Text = "Create Folder";
             this.tsmiCreateFolder.Click += new System.EventHandler(this.tsmiCreateFolder_Click);
             // 
-            // tsmiCreateNFOForSelectedFolder
+            // tsmiCreateNFOFileForSelectedFolder
             // 
-            this.tsmiCreateNFOForSelectedFolder.Name = "tsmiCreateNFOForSelectedFolder";
-            this.tsmiCreateNFOForSelectedFolder.Size = new System.Drawing.Size(429, 22);
-            this.tsmiCreateNFOForSelectedFolder.Text = "Create NFO For Selected Folder";
-            this.tsmiCreateNFOForSelectedFolder.Click += new System.EventHandler(this.tsmiCreateNFOForFolder_Click);
+            this.tsmiCreateNFOFileForSelectedFolder.Name = "tsmiCreateNFOFileForSelectedFolder";
+            this.tsmiCreateNFOFileForSelectedFolder.Size = new System.Drawing.Size(429, 22);
+            this.tsmiCreateNFOFileForSelectedFolder.Text = "Create NFO File For Selected Folder";
+            this.tsmiCreateNFOFileForSelectedFolder.Click += new System.EventHandler(this.tsmiCreateNFOFileForFolder_Click);
             // 
-            // tsmiDeleteNFOForSelectedFolder
+            // tsmiDeleteNFOFileForSelectedFolder
             // 
-            this.tsmiDeleteNFOForSelectedFolder.Name = "tsmiDeleteNFOForSelectedFolder";
-            this.tsmiDeleteNFOForSelectedFolder.Size = new System.Drawing.Size(429, 22);
-            this.tsmiDeleteNFOForSelectedFolder.Text = "Delete NFO For Selected Folder";
-            this.tsmiDeleteNFOForSelectedFolder.Click += new System.EventHandler(this.tsmiDeleteNFOForSelectedFolder_Click);
+            this.tsmiDeleteNFOFileForSelectedFolder.Name = "tsmiDeleteNFOFileForSelectedFolder";
+            this.tsmiDeleteNFOFileForSelectedFolder.Size = new System.Drawing.Size(429, 22);
+            this.tsmiDeleteNFOFileForSelectedFolder.Text = "Delete NFO File For Selected Folder";
+            this.tsmiDeleteNFOFileForSelectedFolder.Click += new System.EventHandler(this.tsmiDeleteNFOFileForSelectedFolder_Click);
             // 
             // tsmiInterpolateColorsFromBeginningToSelection
             // 
@@ -104,7 +105,7 @@
             this.pgFLFolder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgFLFolder.Location = new System.Drawing.Point(0, 0);
             this.pgFLFolder.Name = "pgFLFolder";
-            this.pgFLFolder.Size = new System.Drawing.Size(486, 196);
+            this.pgFLFolder.Size = new System.Drawing.Size(529, 196);
             this.pgFLFolder.TabIndex = 2;
             this.pgFLFolder.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgFLFolder_PropertyValueChanged);
             // 
@@ -123,7 +124,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbRootFolder.Location = new System.Drawing.Point(12, 27);
             this.tbRootFolder.Name = "tbRootFolder";
-            this.tbRootFolder.Size = new System.Drawing.Size(486, 23);
+            this.tbRootFolder.Size = new System.Drawing.Size(529, 23);
             this.tbRootFolder.TabIndex = 4;
             this.tbRootFolder.DoubleClick += new System.EventHandler(this.tbRootFolder_DoubleClick);
             // 
@@ -143,7 +144,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgFLFolder);
-            this.splitContainer1.Size = new System.Drawing.Size(486, 333);
+            this.splitContainer1.Size = new System.Drawing.Size(529, 333);
             this.splitContainer1.SplitterDistance = 133;
             this.splitContainer1.TabIndex = 5;
             this.splitContainer1.Text = "splitContainer1";
@@ -152,14 +153,16 @@
             // 
             this.lvFLFolder.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chDirectoryName,
-            this.chNFOFileExists});
+            this.chNFOFileExists,
+            this.chNameIsCompliant});
             this.lvFLFolder.ContextMenuStrip = this.cmsFLFolder;
             this.lvFLFolder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lvFLFolder.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lvFLFolder.FullRowSelect = true;
             this.lvFLFolder.HideSelection = false;
             this.lvFLFolder.Location = new System.Drawing.Point(0, 0);
             this.lvFLFolder.Name = "lvFLFolder";
-            this.lvFLFolder.Size = new System.Drawing.Size(486, 133);
+            this.lvFLFolder.Size = new System.Drawing.Size(529, 133);
             this.lvFLFolder.TabIndex = 0;
             this.lvFLFolder.UseCompatibleStateImageBehavior = false;
             this.lvFLFolder.View = System.Windows.Forms.View.Details;
@@ -174,7 +177,12 @@
             // chNFOFileExists
             // 
             this.chNFOFileExists.Text = "NFO File Exists";
-            this.chNFOFileExists.Width = 230;
+            this.chNFOFileExists.Width = 130;
+            // 
+            // chNameIsCompliant
+            // 
+            this.chNameIsCompliant.Text = "Name is Compliant";
+            this.chNameIsCompliant.Width = 130;
             // 
             // cbInterpolationModes
             // 
@@ -199,7 +207,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(511, 441);
+            this.ClientSize = new System.Drawing.Size(554, 441);
             this.Controls.Add(this.cbInterpolationModes);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.tbRootFolder);
@@ -224,16 +232,17 @@
         private System.Windows.Forms.Label lbRootFolder;
         private System.Windows.Forms.ToolStripMenuItem tsmiInterpolateColorsFromBeginningToEnd;
         private System.Windows.Forms.ToolStripMenuItem tsmiInterpolateColorsFromBeginningToSelection;
-        private System.Windows.Forms.ToolStripMenuItem tsmiCreateNFOForSelectedFolder;
+        private System.Windows.Forms.ToolStripMenuItem tsmiCreateNFOFileForSelectedFolder;
         private System.Windows.Forms.TextBox tbRootFolder;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListView lvFLFolder;
         private System.Windows.Forms.ColumnHeader chDirectoryName;
         private System.Windows.Forms.ColumnHeader chNFOFileExists;
         private System.Windows.Forms.ToolStripMenuItem tsmiCreateFolder;
-        private System.Windows.Forms.ToolStripMenuItem tsmiDeleteNFOForSelectedFolder;
+        private System.Windows.Forms.ToolStripMenuItem tsmiDeleteNFOFileForSelectedFolder;
         private System.Windows.Forms.ComboBox cbInterpolationModes;
         private System.Windows.Forms.Label lbInterpolatorMode;
+        private System.Windows.Forms.ColumnHeader chNameIsCompliant;
     }
 }
 
