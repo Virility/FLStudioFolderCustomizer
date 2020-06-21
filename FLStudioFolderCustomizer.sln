@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FLStudioFolderCustomizer", "FLStudioFolderCustomizer\FLStudioFolderCustomizer.csproj", "{5B87AF5D-58FB-4AFB-984F-FC76896EC218}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B87AF5D-58FB-4AFB-984F-FC76896EC218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B87AF5D-58FB-4AFB-984F-FC76896EC218}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B87AF5D-58FB-4AFB-984F-FC76896EC218}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B87AF5D-58FB-4AFB-984F-FC76896EC218}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {757ABBAE-B61C-4118-B9E6-117D371AFFDE}
+	EndGlobalSection
+EndGlobal
