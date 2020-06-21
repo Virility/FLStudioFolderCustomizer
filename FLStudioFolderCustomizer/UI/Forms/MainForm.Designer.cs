@@ -105,13 +105,14 @@
             this.pgFLFolder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pgFLFolder.Location = new System.Drawing.Point(0, 0);
             this.pgFLFolder.Name = "pgFLFolder";
-            this.pgFLFolder.Size = new System.Drawing.Size(529, 196);
+            this.pgFLFolder.Size = new System.Drawing.Size(599, 196);
             this.pgFLFolder.TabIndex = 2;
             this.pgFLFolder.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgFLFolder_PropertyValueChanged);
             // 
             // lbRootFolder
             // 
             this.lbRootFolder.AutoSize = true;
+            this.lbRootFolder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(82)))), ((int)(((byte)(152)))), ((int)(((byte)(103)))));
             this.lbRootFolder.Location = new System.Drawing.Point(12, 9);
             this.lbRootFolder.Name = "lbRootFolder";
             this.lbRootFolder.Size = new System.Drawing.Size(192, 15);
@@ -124,7 +125,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbRootFolder.Location = new System.Drawing.Point(12, 27);
             this.tbRootFolder.Name = "tbRootFolder";
-            this.tbRootFolder.Size = new System.Drawing.Size(529, 23);
+            this.tbRootFolder.Size = new System.Drawing.Size(599, 23);
             this.tbRootFolder.TabIndex = 4;
             this.tbRootFolder.DoubleClick += new System.EventHandler(this.tbRootFolder_DoubleClick);
             // 
@@ -144,28 +145,32 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pgFLFolder);
-            this.splitContainer1.Size = new System.Drawing.Size(529, 333);
+            this.splitContainer1.Size = new System.Drawing.Size(599, 333);
             this.splitContainer1.SplitterDistance = 133;
             this.splitContainer1.TabIndex = 5;
             this.splitContainer1.Text = "splitContainer1";
             // 
             // lvFLFolder
             // 
+            this.lvFLFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
             this.lvFLFolder.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chDirectoryName,
             this.chNFOFileExists,
             this.chNameIsCompliant});
             this.lvFLFolder.ContextMenuStrip = this.cmsFLFolder;
             this.lvFLFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lvFLFolder.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lvFLFolder.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lvFLFolder.FullRowSelect = true;
             this.lvFLFolder.HideSelection = false;
             this.lvFLFolder.Location = new System.Drawing.Point(0, 0);
             this.lvFLFolder.Name = "lvFLFolder";
-            this.lvFLFolder.Size = new System.Drawing.Size(529, 133);
+            this.lvFLFolder.OwnerDraw = true;
+            this.lvFLFolder.Size = new System.Drawing.Size(599, 133);
             this.lvFLFolder.TabIndex = 0;
             this.lvFLFolder.UseCompatibleStateImageBehavior = false;
             this.lvFLFolder.View = System.Windows.Forms.View.Details;
+            this.lvFLFolder.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.lvFLFolder_DrawColumnHeader);
+            this.lvFLFolder.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lvFLFolder_DrawItem);
             this.lvFLFolder.SelectedIndexChanged += new System.EventHandler(this.lvFLFolder_SelectedIndexChanged);
             this.lvFLFolder.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvFLFolder_KeyDown);
             // 
@@ -182,7 +187,7 @@
             // chNameIsCompliant
             // 
             this.chNameIsCompliant.Text = "Name is Compliant";
-            this.chNameIsCompliant.Width = 130;
+            this.chNameIsCompliant.Width = 180;
             // 
             // cbInterpolationModes
             // 
@@ -197,6 +202,7 @@
             // lbInterpolatorMode
             // 
             this.lbInterpolatorMode.AutoSize = true;
+            this.lbInterpolatorMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(82)))), ((int)(((byte)(152)))), ((int)(((byte)(103)))));
             this.lbInterpolatorMode.Location = new System.Drawing.Point(12, 53);
             this.lbInterpolatorMode.Name = "lbInterpolatorMode";
             this.lbInterpolatorMode.Size = new System.Drawing.Size(103, 15);
@@ -207,7 +213,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(554, 441);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
+            this.ClientSize = new System.Drawing.Size(624, 441);
             this.Controls.Add(this.cbInterpolationModes);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.tbRootFolder);

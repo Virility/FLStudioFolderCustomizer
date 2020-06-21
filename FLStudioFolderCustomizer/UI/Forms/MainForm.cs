@@ -22,22 +22,21 @@ namespace FLStudioFolderCustomizer.UI.Forms
 
         public MainForm()
         {
+            InitializeComponent();
+
             _interpolaters = new ColorInterpolater[]
             {
                 new ColorBlend(),
                 new ColorSplit()
             };
             _colorSceme = new List<Color>();
-
-            InitializeComponent();
-
             cbInterpolationModes.Items.AddRange(_interpolaters);
             cbInterpolationModes.SelectedIndex = 0;
 
-            LoadFromDirectory(string.Empty);
+            LoadFromDirectory();
         }
 
-        private void LoadFromDirectory(string rootFolder)
+        private void LoadFromDirectory(string rootFolder = "")
         {
             if (string.IsNullOrWhiteSpace(rootFolder)) {
                 if (File.Exists(DefaultRootPath))
@@ -89,6 +88,18 @@ namespace FLStudioFolderCustomizer.UI.Forms
 
         private void lvFLFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
+            lvFLFolder.Items.Cast<ListViewItem>()
+                .ToList().ForEach(item =>
+                {
+                    item.BackColor = Color.FromArgb(25, 34, 39);
+                });
+            lvFLFolder.SelectedItems.Cast<ListViewItem>()
+                .ToList().ForEach(item =>
+                {
+                    item.BackColor = Color.FromArgb(41, 50, 55);
+                });
+
+
             if (lvFLFolder.SelectedItems.Count == 0)
                 return;
 
@@ -253,6 +264,17 @@ namespace FLStudioFolderCustomizer.UI.Forms
         {
             if (lvFLFolder.SelectedItems.Count != 0)
                 InterpolateColors(0, lvFLFolder.Items.Count - 1);
+        }
+
+        private void lvFLFolder_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(Config.FLBackColor), e.Bounds);
+            e.DrawText();
+        }
+
+        private void lvFLFolder_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
         }
     }
 }

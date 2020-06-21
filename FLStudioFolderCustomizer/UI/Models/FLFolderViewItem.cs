@@ -1,5 +1,6 @@
 ﻿using FLStudioFolderCustomizer.Core.Models.Colors;
 using FLStudioFolderCustomizer.Models;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace FLStudioFolderCustomizer.UI.Models
@@ -41,6 +42,8 @@ namespace FLStudioFolderCustomizer.UI.Models
 
             if (nfoFileExists && nameIsCompliant)
                 ForeColor = MyColor.ToColor(Folder.Color);
+            else
+                ForeColor = Config.FLBackColor;
         }
     }
 }
