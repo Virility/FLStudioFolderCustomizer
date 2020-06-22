@@ -2,7 +2,6 @@
 
 namespace FLStudioFolderCustomizer.Core.Extensions
 {
-
     public static class ColorExtensions
     {
         public static string ToHex(this Color color) =>

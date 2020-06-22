@@ -1,6 +1,5 @@
 ﻿using FLStudioFolderCustomizer.Core.Models.Colors;
 using FLStudioFolderCustomizer.Models;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace FLStudioFolderCustomizer.UI.Models
@@ -26,8 +25,6 @@ namespace FLStudioFolderCustomizer.UI.Models
         public FLFolderViewItem(string baseFolder, FLFolder folder)
         {
             _baseFolder = baseFolder;
-            _folder = folder;
-
             Folder = folder;
         }
 

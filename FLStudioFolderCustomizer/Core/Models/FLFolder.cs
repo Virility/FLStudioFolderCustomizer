@@ -1,12 +1,14 @@
 ﻿using FLStudioFolderCustomizer.Core.Extensions;
 using FLStudioFolderCustomizer.Core.Models.Colors;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace FLStudioFolderCustomizer.Models
 {
@@ -20,7 +22,7 @@ namespace FLStudioFolderCustomizer.Models
         public string Tip { get; set; }
 
         [Editor(typeof(MyColorEditor), typeof(UITypeEditor))]
-        [Category("Design"), DefaultValue(typeof(MyColor), "0 0 0")]
+        [DefaultValue(typeof(MyColor), "0 0 0")]
         public MyColor Color { get; set; } = DefaultTextColor;
         
         // 33 = Audio Wave Icon
@@ -28,7 +30,7 @@ namespace FLStudioFolderCustomizer.Models
 
         public int HeightOfs { get; set; } = 4;
 
-        public int SortGroup { get; set; } = 4;
+        public int SortGroup { get; set; } = -1;
 
         public bool NFOFileExists(string baseDirectory)
         {
@@ -68,7 +70,11 @@ namespace FLStudioFolderCustomizer.Models
             var folder = new FLFolder();
             folder.FolderName = folderName;
 
-            var pairs = lines.Select(s => s.Split('=')).ToDictionary(s => s[0], s => s[1]);
+            var pairs = new Dictionary<string, string>();
+            foreach (var pair in lines
+                                .Where(line => line.Contains("="))
+                                .Select(line => line.Split('=')))
+                pairs.Add(pair[0], pair.Length == 1 ? string.Empty : pair[1]);
 
             if (pairs.ContainsKey("Tip"))
                 folder.Tip = pairs["Tip"];
@@ -84,8 +90,8 @@ namespace FLStudioFolderCustomizer.Models
                 folder.IconIndex = iconIndex;
             if (pairs.ContainsKey("HeightOfs") && int.TryParse(pairs["HeightOfs"], out int heightOfs))
                 folder.HeightOfs = heightOfs;
-            //if (pairs.ContainsKey("SortGroup") && int.TryParse(pairs["SortGroup"], out int sortGroup))
-            //    folder.SortGroup = sortGroup;
+            if (pairs.ContainsKey("SortGroup") && int.TryParse(pairs["SortGroup"], out int sortGroup))
+                folder.SortGroup = sortGroup;
 
             return folder;
         }
@@ -98,7 +104,8 @@ namespace FLStudioFolderCustomizer.Models
             sb.AppendLine("Color=$00" + MyColor.ToColor(Color).ToDelphiHex());
             sb.AppendLine("IconIndex=" + IconIndex);
             sb.AppendLine("HeightOfs=" + HeightOfs);
-            //sb.Append("SortGroup=" + SortGroup);
+            if (SortGroup != -1)
+                sb.Append("SortGroup=" + SortGroup);
             return sb.ToString();
         }
 

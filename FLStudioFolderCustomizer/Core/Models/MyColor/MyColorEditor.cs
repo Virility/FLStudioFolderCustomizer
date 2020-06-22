@@ -22,7 +22,7 @@ namespace FLStudioFolderCustomizer.Core.Models.Colors
 
             if (service != null)
             {
-                MyColor color = (MyColor)value;
+                var color = (MyColor)value;
 
                 var selectionControl = new ColorDialog();
                 selectionControl.Color = Color.FromArgb(color.GetARGB());

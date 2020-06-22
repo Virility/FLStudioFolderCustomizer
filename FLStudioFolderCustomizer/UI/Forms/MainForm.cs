@@ -1,4 +1,5 @@
 ﻿using FLStudioFolderCustomizer.Core.Extensions;
+using FLStudioFolderCustomizer.Core.Helpers;
 using FLStudioFolderCustomizer.Core.Models.ColorHelpers;
 using FLStudioFolderCustomizer.Core.Models.Colors;
 using FLStudioFolderCustomizer.Models;
@@ -17,8 +18,9 @@ namespace FLStudioFolderCustomizer.UI.Forms
     {
         private const string DefaultRootPath = "DefaultRootPath.txt";
         private readonly ColorInterpolater[] _interpolaters;
-
         private List<Color> _colorSceme;
+        private readonly List<Character> _characters;
+        private int _imageIndex = -1;
 
         public MainForm()
         {
@@ -33,7 +35,11 @@ namespace FLStudioFolderCustomizer.UI.Forms
             cbInterpolationModes.Items.AddRange(_interpolaters);
             cbInterpolationModes.SelectedIndex = 0;
 
+            _characters = FontHelper.GetCharacters();
+
             LoadFromDirectory();
+
+            bEncrementGlyphImageIndex_Click(null, null);
         }
 
         private void LoadFromDirectory(string rootFolder = "")
@@ -71,9 +77,11 @@ namespace FLStudioFolderCustomizer.UI.Forms
         {
             lvFLFolder.Items.Clear();
 
-            using var dialog = new FolderBrowserDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-                LoadFromDirectory(dialog.SelectedPath);
+            using (var dialog = new FolderBrowserDialog())
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    LoadFromDirectory(dialog.SelectedPath);
+            }
         }
 
         private void lvFLFolder_KeyDown(object sender, KeyEventArgs e)
@@ -86,20 +94,19 @@ namespace FLStudioFolderCustomizer.UI.Forms
             e.SuppressKeyPress = true;
         }
 
+        private void lvFLFolder_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(Config.FLBackColor), e.Bounds);
+            e.DrawText();
+        }
+
+        private void lvFLFolder_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
         private void lvFLFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lvFLFolder.Items.Cast<ListViewItem>()
-                .ToList().ForEach(item =>
-                {
-                    item.BackColor = Color.FromArgb(25, 34, 39);
-                });
-            lvFLFolder.SelectedItems.Cast<ListViewItem>()
-                .ToList().ForEach(item =>
-                {
-                    item.BackColor = Color.FromArgb(41, 50, 55);
-                });
-
-
             if (lvFLFolder.SelectedItems.Count == 0)
                 return;
 
@@ -110,7 +117,7 @@ namespace FLStudioFolderCustomizer.UI.Forms
                 pgFLFolder.SelectedObject = null;
         }
 
-        private void pgFLFolder_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void PgFLFolder_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             var flFolderViewItem = lvFLFolder.SelectedItems[0] as FLFolderViewItem;
             flFolderViewItem.Folder = pgFLFolder.SelectedObject as FLFolder;
@@ -184,17 +191,6 @@ namespace FLStudioFolderCustomizer.UI.Forms
             lvFLFolder.EndUpdate();
         }
 
-        private void ReplaceColorAndSave(IEnumerable<FLFolderViewItem> fLFolderViewItems,
-            IEnumerable<Color> interpolatedColors, int index, int colorOffset)
-        {
-            var flFolderViewItem = fLFolderViewItems.ElementAt(index);
-
-            flFolderViewItem.Folder.Color = MyColor.FromColor(interpolatedColors.ElementAt(index - colorOffset));
-            flFolderViewItem.Update();
-
-            CreateNFOFile(flFolderViewItem.Folder);
-        }
-
         private void InterpolateColors(int startIndex, int endIndex)
         {
             if (startIndex >= endIndex) return;
@@ -222,16 +218,18 @@ namespace FLStudioFolderCustomizer.UI.Forms
                         if (_colorSceme.Count == 0 ||
                            (_colorSceme.Count > 0 && MessageBox.Show("Would you like to use the last color scheme?", "Use Last Scheme?", MessageBoxButtons.YesNo) != DialogResult.Yes))
                         {
-                            using var dialog = new ColorListPickerDialog();
-                            dialog.ShowDialog();
-
-                            if (dialog.Colors.Count == 0)
+                            using (var dialog = new ColorListPickerDialog())
                             {
-                                MessageBox.Show("The color list is empty.");
-                                return;
-                            }
+                                dialog.ShowDialog();
 
-                            _colorSceme = dialog.Colors;
+                                if (dialog.Colors.Count == 0)
+                                {
+                                    MessageBox.Show("The color list is empty.");
+                                    return;
+                                }
+
+                                _colorSceme = dialog.Colors;
+                            }
                         }
                         colors = _colorSceme.ToArray();
                         break;
@@ -242,7 +240,12 @@ namespace FLStudioFolderCustomizer.UI.Forms
                 var interpolatedColors = interpolater.InterpolateColors(startIndex, endIndex, count, colors);
                 lvFLFolder.BeginUpdate();
                 for (int i = interpolater.StartIndex; i < count - interpolater.LengthOffset; i++)
-                    ReplaceColorAndSave(fLFolderViewItems, interpolatedColors, i, interpolater.ColorOffset);
+                {
+                    var flFolderViewItem = fLFolderViewItems.ElementAt(i);
+                    flFolderViewItem.Folder.Color = MyColor.FromColor(interpolatedColors.ElementAt(i - interpolater.ColorOffset));
+                    flFolderViewItem.Update();
+                    CreateNFOFile(flFolderViewItem.Folder);
+                }
                 lvFLFolder.EndUpdate();
             }
             catch (Exception ex)
@@ -266,15 +269,37 @@ namespace FLStudioFolderCustomizer.UI.Forms
                 InterpolateColors(0, lvFLFolder.Items.Count - 1);
         }
 
-        private void lvFLFolder_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        private void UpdateGlyph(int incrementValue)
         {
-            e.Graphics.FillRectangle(new SolidBrush(Config.FLBackColor), e.Bounds);
-            e.DrawText();
+            if (_characters.Count == 0 || (incrementValue == 1 && _imageIndex == _characters.Count - 1) || (incrementValue == -1 && _imageIndex == 0))
+                return;
+
+            _imageIndex += incrementValue;
+            var character = _characters[_imageIndex];
+            pGlyph.BackgroundImage = character.GetImage();
+            tbImageIndex.Text = character.GetImageIndex().ToString();
         }
 
-        private void lvFLFolder_DrawItem(object sender, DrawListViewItemEventArgs e)
+        private void bEncrementGlyphImageIndex_Click(object sender, EventArgs e)
         {
-            e.DrawDefault = true;
+            UpdateGlyph(1);
+        }
+
+        private void bDecrementGlyphImageIndex_Click(object sender, EventArgs e)
+        {
+            UpdateGlyph(-1);
+        }
+
+        private void bSetImageToCurrentDirectory_Click(object sender, EventArgs e)
+        {
+            if (pgFLFolder.SelectedObject == null)
+                return;
+
+            var folder = pgFLFolder.SelectedObject as FLFolder;
+            folder.IconIndex = int.Parse(tbImageIndex.Text);
+            CreateNFOFile(folder);
+
+            pgFLFolder.Invalidate();
         }
     }
 }

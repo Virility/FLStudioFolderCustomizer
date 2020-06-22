@@ -16,10 +16,7 @@ namespace FLStudioFolderCustomizer.Core.Models.Colors
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destType)
         {
             if (destType == typeof(string) && value is MyColor color1)
-            {
-                MyColor color = color1;
-                return color.ToString();
-            }
+                return color1.ToString();
             return base.ConvertTo(context, culture, value, destType);
         }
     }

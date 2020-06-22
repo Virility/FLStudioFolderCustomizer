@@ -23,15 +23,15 @@ namespace FLStudioFolderCustomizer.Core.Models.ColorHelpers
             var startColor = colors[0];
             var endColor = colors[1];
 
-            Debug.WriteLine("Color 1: " + startColor.ToRgbString());
-            Debug.WriteLine("Color 2: " + endColor.ToRgbString());
+            Debug.WriteLine("Start Color: " + startColor.ToRgbString());
+            Debug.WriteLine("End Color: " + endColor.ToRgbString());
 
             var blendInterpolationDifference = 1d / length;
 
             var header = new string('=', 20);
             Debug.WriteLine(header);
 
-            var colorss = new List<Color>();
+            var interpolatedColors = new List<Color>();
             for (int i = StartIndex; i < length - LengthOffset; i++)
             {
                 Debug.WriteLine("Item #" + i);
@@ -41,11 +41,11 @@ namespace FLStudioFolderCustomizer.Core.Models.ColorHelpers
 
                 var blendedColor = endColor.Blend(startColor, blendAmount);
                 Debug.WriteLine("Color: " + blendedColor.ToRgbString());
-                colorss.Add(blendedColor);
+                interpolatedColors.Add(blendedColor);
             }
             Debug.WriteLine(header);
 
-            return colorss;
+            return interpolatedColors;
         }
 
         public override string ToString()

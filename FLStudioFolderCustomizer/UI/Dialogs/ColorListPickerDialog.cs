@@ -17,8 +17,8 @@ namespace FLStudioFolderCustomizer.UI.Dialogs
 
         private Color GetColor(Color oldColor)
         {
-            using var dialog = oldColor == Color.Empty ? new ColorDialog() : new ColorDialog() { Color = oldColor };
-            return dialog.ShowDialog() == DialogResult.OK ? dialog.Color : Color.Empty;
+            using (var dialog = oldColor == Color.Empty ? new ColorDialog() : new ColorDialog() { Color = oldColor })
+                return dialog.ShowDialog() == DialogResult.OK ? dialog.Color : Color.Empty;
         }
 
 
