@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-
+using System.Reflection;
 using Fonts = System.Windows.Media.Fonts;
 using GlyphTypeface = System.Windows.Media.GlyphTypeface;
 
@@ -21,7 +21,12 @@ namespace FLStudioFolderCustomizer.Core.Helpers
 
         static FontHelper()
         {
-            FLGlyphsExFontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Image-Line\Shared\Artwork\Fonts\ILGlyphsEx.ttf");
+            FLGlyphsExFontPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ILGlyphsEx.ttf");
+            if (!File.Exists(FLGlyphsExFontPath))
+            {
+                var ilFontLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Image-Line\Shared\Artwork\Fonts\ILGlyphsEx.ilfont");
+                File.Copy(ilFontLocation, FLGlyphsExFontPath);
+            }
             var fontCollection = new PrivateFontCollection();
             fontCollection.AddFontFile(FLGlyphsExFontPath);
             _fontFamily = fontCollection.Families[0];

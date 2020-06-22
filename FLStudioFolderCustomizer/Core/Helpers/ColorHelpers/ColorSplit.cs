@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 
-namespace FLStudioFolderCustomizer.Core.Models.ColorHelpers
+namespace FLStudioFolderCustomizer.Core.Helpers.ColorHelpers
 {
     public class ColorSplit : ColorInterpolater
     {
@@ -24,7 +24,7 @@ namespace FLStudioFolderCustomizer.Core.Models.ColorHelpers
 
             var blockIndex = 0;
             var blockCount = 0;
-            var numberPerBlock = Math.Ceiling((double) length / colors.Length);
+            var numberPerBlock = Math.Ceiling((double)length / colors.Length);
             Debug.WriteLine("Number Per Block: " + numberPerBlock);
 
             var header = new string('=', 20);

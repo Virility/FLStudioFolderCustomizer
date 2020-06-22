@@ -15,6 +15,7 @@ namespace FLStudioFolderCustomizer.Core.Models.Colors
         {
             return UITypeEditorEditStyle.Modal;
         }
+
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             if (provider != null)
@@ -24,11 +25,13 @@ namespace FLStudioFolderCustomizer.Core.Models.Colors
             {
                 var color = (MyColor)value;
 
-                var selectionControl = new ColorDialog();
-                selectionControl.Color = Color.FromArgb(color.GetARGB());
-                selectionControl.ShowDialog();
+                using (var dialog = new ColorDialog())
+                {
+                    dialog.Color = Color.FromArgb(color.GetARGB());
+                    dialog.ShowDialog();
 
-                value = new MyColor(selectionControl.Color.ToArgb());
+                    value = new MyColor(dialog.Color.ToArgb());
+                }
             }
 
             return value;

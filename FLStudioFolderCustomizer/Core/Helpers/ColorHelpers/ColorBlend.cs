@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 
-namespace FLStudioFolderCustomizer.Core.Models.ColorHelpers
+namespace FLStudioFolderCustomizer.Core.Helpers.ColorHelpers
 {
     public class ColorBlend : ColorInterpolater
     {

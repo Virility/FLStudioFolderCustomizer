@@ -1,6 +1,6 @@
 ﻿using FLStudioFolderCustomizer.Core.Extensions;
 using FLStudioFolderCustomizer.Core.Helpers;
-using FLStudioFolderCustomizer.Core.Models.ColorHelpers;
+using FLStudioFolderCustomizer.Core.Helpers.ColorHelpers;
 using FLStudioFolderCustomizer.Core.Models.Colors;
 using FLStudioFolderCustomizer.Models;
 using FLStudioFolderCustomizer.UI.Dialogs;
